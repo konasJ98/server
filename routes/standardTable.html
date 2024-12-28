@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Songpool</title>
+  <script src="https://moment.github.io/luxon/global/luxon.js"></script>
+  <script src="http://localhost:3000/javascripts/data.js"></script>
+  <script src="http://localhost:3000/javascripts/sessions.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/tabulator-tables/dist/css/tabulator.min.css">
+  <link rel="stylesheet" href="http://localhost:3000/stylesheets/standardTable.css">
+  <link rel="stylesheet" href="http://localhost:3000/stylesheets/buttons.css">
+</head>
+
+<body>
+  <!-- Structure -->
+  <div class="page-grid">
+    <div class="grid-item">
+      <button id="add-row-button"></button>
+    </div>
+    <div class="grid-item">
+      <button id="print-button">Print</button>
+    </div>
+    <div class="grid-item">
+      <div id="main-table"></div>
+    </div>
+    <div class="grid-item">
+      <button id="add-column-button"></button>
+    </div>
+    <div id="sheet-bar-container">
+      <div class="sheet-button-container">
+        <button class="sheet-button" id="new-sheet-button" onclick="AddSheet()">New sheet</button>
+      </div>
+        <div id="Songpool-Btn" class="button-77" contenteditable="true" onclick="setupTable('songpool')">Songpool</div>
+    </div>
+  </div>
+
+
+
+  <!-- Main table script -->
+  <script src="https://unpkg.com/tabulator-tables/dist/js/tabulator.min.js"></script>
+  <script>
+    //Setting up a default table
+    function setupTable(id){ //default table layout
+      //console.log("Create table with id "+id)
+      if(table)
+        table.destroy();
+      table = new Tabulator("#main-table", {
+        persistence:true,
+        persistenceID: id,
+        persistenceWriterFunc: persistenceWriter,
+        persistenceReaderFunc: persistenceReader,
+        movableRows:true,
+        movableColumns: true,
+        rowHeader:{headerSort:false, resizable: false, minWidth:30, width:30, rowHandle:true, formatter:"handle"},
+        columns:[
+            {title:"Title", field:"title", editor:"input", frozen:true},
+            {title:"Duration", field:"duration", formatter:"datetimediff", editor:"input"},
+            {title:"Tempo", field:"tempo", sorter:"number", editor:"input"},
+            {title:"Key (original)", field:"key_original", editor:"input"},
+            {title:"Key (cover)", field:"key_cover", editor:"input"},
+            {title:"Comment", field:"comment", editor:"input"},
+            {title:"Notes", field:"notes"}
+        ],
+        data:loadTableData(id) //Load right away, elsewise it fails because initializing takes time.
+    });
+    
+    // Immediately save changes in data
+    table.on("dataChanged", function() {
+            saveTableData(table);
+        });
+      }
+  </script>
+
+  <!-- Handle Sheets -->
+  <script>
+    //Initialize
+    var table = null;
+    setupTable("songpool");</script>
+  <script>
+    let sheetCounter = 0;  // Keep track of sheets, this is also a kind of id
+
+    function AddSheet() {
+      sheetCounter++; //Update counter
+      const buttonContainer = document.querySelector('.sheet-button-container');
+      const newButton = document.createElement('button');
+      newButton.classList.add('sheet-button');  // Adding a class
+      newButton.id = `Table-${sheetCounter}-Btn`; //Add the id
+      newButton.onclick=setupTable.bind(null, newButton.id) //TODO: probably a single eventlistener on the button container is more appropriate then one on each button
+      newButton.contentEditable=true;
+      newButton.textContent = `Sheet ${sheetCounter}`;
+      buttonContainer.appendChild(newButton);
+      //buttonContainer.insertBefore(newButton, document.getElementById("new-sheet-button"));
+    }
+  </script>
+
+
+  <!-- Event listeners -->
+  <script>
+    // Add table buttons functionality
+    document.getElementById("add-column-button").addEventListener("click", () => {
+      table.addColumn();
+    });
+    document.getElementById("add-row-button").addEventListener("click", () => {
+      table.addRow();
+    });
+  </script>
+
+  <!-- Saving and loading -->
+</body>
+</html>
