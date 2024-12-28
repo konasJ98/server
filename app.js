@@ -21,7 +21,10 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('*', standardTableRouter);
+
+//route all paths containing only letters and numbers to some table
+app.use('/', standardTableRouter);
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));  // This triggers the error handler for 404
