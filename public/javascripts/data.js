@@ -86,3 +86,51 @@ function loadTableDataFromCookies(id) {
     if(loggingCookies) console.log("No table data found in cookies.");
   }
 }
+
+
+
+//sync json via http patch
+function patchToServer(url, data) {
+  fetch(url, {
+    method: 'PATCH', // HTTP method
+    headers: {
+      'Content-Type': 'application/json', // Ensure the server understands JSON
+    },
+    body: JSON.stringify(data), // Convert JavaScript object to JSON
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json(); // Parse the response JSON
+    })
+    .then(data => {
+      console.log('Success:', data); // Handle the response
+    })
+    .catch(error => {
+      console.error('Error:', error); // Handle errors
+    });
+  }
+
+  //sync json via http patch
+function putToServer(url, data) {
+  fetch(url, {
+    method: 'PUT', // HTTP method
+    headers: {
+      'Content-Type': 'application/json', // Ensure the server understands JSON
+    },
+    body: JSON.stringify(data), // Convert JavaScript object to JSON
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json(); // Parse the response JSON
+    })
+    .then(data => {
+      console.log('Success:', data); // Handle the response
+    })
+    .catch(error => {
+      console.error('Error:', error); // Handle errors
+    });
+  }

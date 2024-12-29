@@ -8,7 +8,9 @@ var debug = require('debug')('server:app');
 var indexRouter = require('./routes/index');
 var standardTableRouter = require('./routes/standardTable');
 
-const { sequelize, testConnection } = require('./bin/db');  // Import the testConnection function
+var sync = require('./bin/sync.js')
+
+//const { sequelize, testConnection } = require('./bin/db');  // Import the testConnection function
 
 var app = express();
 
@@ -31,7 +33,8 @@ app.use('/', standardTableRouter);
 app.use(function(req, res, next) {
   next(createError(404));  // This triggers the error handler for 404
 });
-testConnection();
+
+
 // error handler
 app.use(function(err, req, res, next) {
   // set locals, only providing error in development
