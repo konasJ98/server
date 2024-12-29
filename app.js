@@ -8,7 +8,8 @@ var debug = require('debug')('server:app');
 var indexRouter = require('./routes/index');
 var standardTableRouter = require('./routes/standardTable');
 
-var sync = require('./bin/sync.js')
+var sync = require('./bin/sync.js');
+const Json5Database = require('./bin/JsonDatabase.js');
 
 //const { sequelize, testConnection } = require('./bin/db');  // Import the testConnection function
 
@@ -34,6 +35,7 @@ app.use(function(req, res, next) {
   next(createError(404));  // This triggers the error handler for 404
 });
 
+p = new Json5Database('asdf');
 
 // error handler
 app.use(function(err, req, res, next) {

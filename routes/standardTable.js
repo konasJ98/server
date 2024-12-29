@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var path = require('path');
 var debug = require('debug')('server:standardTable');
+const Json5Database = require('../bin/JsonDatabase.js');
 
 /* GET home page. */
 router.get('/:tableID', function(req, res, next) {

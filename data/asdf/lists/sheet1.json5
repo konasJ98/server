@@ -1,0 +1,15 @@
+{
+  entries: [
+    0,
+    2,
+    1,
+    0,
+  ],
+  patches: [
+    {
+      op: 'replace',
+      path: '/3/title',
+      value: 'HOLDIAY!',
+    }
+  ],
+}
