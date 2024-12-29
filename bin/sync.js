@@ -3,19 +3,37 @@ const jsonpatch = require('fast-json-patch');
 
 const test = require('../public/test.json');
 
-//observer
-observer = jsonpatch.observe(test);
 
-//deepcopy
-let data= JSON.parse(JSON.stringify(test));;
-let data_= JSON.parse(JSON.stringify(test));;
+class dataModel {
 
-//change data
-data.string='adsfdd';
+}
 
-//create patch
-var patch = jsonpatch.compare(test, data);
+class Songpool {
 
-//patch data_
-jsonpatch.applyPatch(data_, patch);
+}
 
+class Setlist {
+
+}
+
+class Song {
+    
+}
+
+/*
+class Car {
+    constructor(name, year) {
+      this.name = name;
+      this.year = year;
+    }
+    age(x) {
+      return x - this.year;
+    }
+  }
+  
+  const date = new Date();
+  let year = date.getFullYear();
+  
+  const myCar = new Car("Ford", 2014);
+  document.getElementById("demo").innerHTML=
+  "My car is " + myCar.age(year) + " years old."; */

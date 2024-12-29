@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><%= tableID %></title>
   <script src="https://moment.github.io/luxon/global/luxon.js"></script>
-  <script src="https://unpkg.com/fast-json-patch/dist/fast-json-patch.min.js"></script> 
+  <script src="https://unpkg.com/fast-json-patch/dist/fast-json-patch.min.js"></script>
   <script src="<%= staticserve %>/javascripts/data.js"></script>
   <script src="<%= staticserve %>/javascripts/sessions.js"></script>
   <link rel="stylesheet" href="https://unpkg.com/tabulator-tables/dist/css/tabulator.min.css">
@@ -64,45 +64,49 @@
             {title:"Notes", field:"notes"}
         ],
         data:loadTableData(id) //Load right away, elsewise it fails because initializing takes time.,
-    });
+      });
 
-    table.on("tableBuilt", function () {
-          //console.log("-----Table is fully initialized.");
-        });
+      table.on("tableBuilt", function () {
+            //console.log("-----Table is fully initialized.");
+            oldData = table.getData();
+          });
 
-    // Immediately save changes in data
-    table.on("dataChanged", function() {
-            //saveTableData(table); //this is in "offline" mode, where the table can be saved...
-            //... but we need something like "syncTableData":
-            console.log("-----dataChanged!");
-            //const patch = computeJsonPatch();
-            //patchToServer("<%= serverurl %>", patch);
-            //console.log("-----patch done!");
-            //console.log(patch);
-            putToServer("<%= serverurl %>", {list: id, tableData: table.getData()});
-            console.log("-----data putted!");
-        });
-  }
+      // Immediately save changes in data
+      table.on("dataChanged", function() {
+              //saveTableData(table); //this is in "offline" mode, where the table can be saved...
+              //... but we need something like "syncTableData":
+              console.log("-----dataChanged!");
+              const patch = computeJsonPatch();
+              patchToServer("<%= serverurl %>", patch);
+              //putToServer("<%= serverurl %>", {list: id, tableData: table.getData()});
+      });
+    }
   </script>
 
   <!-- Compute Json Patch -->
-  <script>/*
+  <script>
     function computeJsonPatch() {
       //create patch by comparing latest data with old data
-      var patch = jsonpatch.compare(table.getData(), oldData);
-      //update old data
-      oldData = table.getData();
-      return patch;
-    }*/
+      try {
+        const patch = jsonpatch.compare(oldData, table.getData());
+        oldData = table.getData();
+        return patch;
+      } catch (error) {
+        console.log('cant compute patch');
+        oldData = table.getData();
+      }
+    }
+  </script>
+
+  <script>
+    //Initialize
+    let table = null;
+    setupTable("songpool");
+    let oldData = null;
   </script>
 
   <!-- Handle Sheets -->
   <script>
-    //Initialize
-    var table = null;
-    setupTable("songpool");
-    let oldData = null;
-    
     let sheetCounter = 0;  // Keep track of sheets, this is also a kind of id
 
     function AddSheet() {
