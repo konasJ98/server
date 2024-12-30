@@ -30,9 +30,9 @@
     </div>
     <div id="sheet-bar-container">
       <div class="sheet-button-container">
-        <button class="sheet-button" id="new-sheet-button" onclick="AddSheet()">New sheet</button>
+        <button class="sheet-button" id="new-sheet-button" onclick="CreateList('someName')">New sheet</button>
       </div>
-        <div id="Songpool-Btn" class="button-77" contenteditable="true" onclick="setupTable('songpool')">Songpool</div>
+        <div id="Songpool-Btn" class="button-77" contenteditable="true" onclick="setupTable(0)">Songpool</div>
     </div>
   </div>
 
@@ -42,15 +42,20 @@
   <script src="https://unpkg.com/tabulator-tables/dist/js/tabulator.min.js"></script>
   <script>
     let oldData=null;
+    let meta = <%- meta %>; //remember to use the - not the = for raw input
 
     //Setting up a default table
-    function setupTable(id){ //default table layout
+    function setupTable(listID){
+      //set url to load data from via ajax in constructor
+      let jsonURL = '<%= host %>/<%= tableID %>/'+listID; //maybe preload this?
+      //console.log(jsonURL);
+
       //console.log("Create table with id "+id)
       if(table)
         table.destroy();
       table = new Tabulator("#main-table", {
         persistence:true,
-        persistenceID: id,
+        persistenceID: listID,
         persistenceWriterFunc: persistenceWriter,
         persistenceReaderFunc: persistenceReader,
         movableRows:true,
@@ -67,7 +72,7 @@
         ],
         //data:loadTableData(id) //Load right away, elsewise it fails because initializing takes time.,
         //data: getJson('<%= host %>', '<%= tableID %>')
-        ajaxURL: '<%= host %>/<%= tableID %>.json'
+        ajaxURL: jsonURL
       });
       //getJson('<%= host %>', id);
       table.on("tableBuilt", function () {
@@ -82,10 +87,8 @@
               console.log("-----dataChanged!");
               //create patch by comparing latest data with old data
               try {
-                const patch = jsonpatch.compare(oldData, table.getData());
-                console.log(oldData);
-                console.log(table.getData());
-                patchToServer("<%= serverurl %>", patch);
+                const patches = jsonpatch.compare(oldData, table.getData());
+                patchToServer("<%= serverurl %>", {patches: patches, listID: listID});
               } catch (error) {
                 console.log('cant compute patch');
               }
@@ -95,28 +98,48 @@
     }
   </script>
 
-  <script>
-    //Initialize
-    let table = null;
-    setupTable("songpool");
-  </script>
-
   <!-- Handle Sheets -->
   <script>
-    let sheetCounter = 0;  // Keep track of sheets, this is also a kind of id
-
-    function AddSheet() {
-      sheetCounter++; //Update counter
+    function AddSheetButton(listMeta) {
       const buttonContainer = document.querySelector('.sheet-button-container');
       const newButton = document.createElement('button');
       newButton.classList.add('sheet-button');  // Adding a class
-      newButton.id = `Table-${sheetCounter}-Btn`; //Add the id
-      newButton.onclick=setupTable.bind(null, newButton.id) //TODO: probably a single eventlistener on the button container is more appropriate then one on each button
+      newButton.id = 'List-Button-'+listMeta.listID; //Add the id
+      newButton.onclick=setupTable.bind(null, listMeta.listID) //TODO: probably a single eventlistener on the button container is more appropriate then one on each button
       newButton.contentEditable=true;
-      newButton.textContent = `Sheet ${sheetCounter}`;
+      newButton.textContent = listMeta.name;
       buttonContainer.appendChild(newButton);
-      //buttonContainer.insertBefore(newButton, document.getElementById("new-sheet-button"));
     }
+
+    function CreateList(name) {
+      fetch("<%= host %>/<%= tableID %>", {
+        method: 'PUT', // Specify the HTTP method
+        headers: {
+          'Content-Type': 'text/plain', // Inform the server about the plain text format
+        },
+        body: name, // Send the text payload directly
+      }).then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json(); // Parse the text response from the server
+      }).then((data) => {
+        meta = data.meta
+        //create the button
+        AddSheetButton(data.newListMeta);
+        console.log('Server Response:', data); // Handle the response
+      }).catch((error) => {
+        console.error('Error:', error); // Handle any errors
+      });
+    }
+  </script>
+
+
+  <!-- Initialize -->
+  <script>
+    let table = null;
+    setupTable(0); //setup the table base on ID, which is always 0 for the pool and a running index for further lists
+    meta.lists.forEach((listMeta) =>{AddSheetButton(listMeta)});
   </script>
 
 

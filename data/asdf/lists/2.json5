@@ -1,17 +1,20 @@
 {
-    listID: 1, //this is a unique ID, songpool always has id 0, all further lists have running id.
+    listID: 2, //this is a unique ID, songpool always has id 0, all further lists have running id.
     entries: [ //this is an ordering array for the songs in the songpool. all songs get saved in the songpool.
         0,
         2,
         1,
         0,
+        2,
+        2,
+        2
     ],
     patches: [  //if the user overwrites data in this list, the songdata in the pool stays the same and get
                 //overridden by these fast-json-patch patches.
         {       //That way, the song can be gathered in different lists with different keys for example.
         op: 'replace',
-        path: '/3/title',
-        value: 'HOLDIAY!',
+        path: '/1/title',
+        value: 'Hundespaßäöü,.-_:;#+*',
         }
     ],
 }

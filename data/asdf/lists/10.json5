@@ -1,0 +1,21 @@
+{
+  listID: 10,
+  entries: [],
+  patches: [
+    {
+      op: 'add',
+      path: '/0',
+      value: {},
+    },
+    {
+      op: 'add',
+      path: '/1',
+      value: {},
+    },
+    {
+      op: 'replace',
+      path: '/0/title',
+      value: 'rrrrr',
+    },
+  ],
+}

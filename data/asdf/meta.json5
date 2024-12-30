@@ -1,0 +1,61 @@
+{
+  nextID: 14,
+  lists: [
+    {
+      name: 'songpool',
+      listID: 0,
+    },
+    {
+      name: 'sheet1',
+      listID: 1,
+    },
+    {
+      name: 'sheet2',
+      listID: 2,
+    },
+    {
+      name: 'someName',
+      listID: 3,
+    },
+    {
+      name: 'someName',
+      listID: 4,
+    },
+    {
+      name: 'someName',
+      listID: 5,
+    },
+    {
+      name: 'someName',
+      listID: 6,
+    },
+    {
+      name: 'someName',
+      listID: 7,
+    },
+    {
+      name: 'someName',
+      listID: 8,
+    },
+    {
+      name: 'someName',
+      listID: 9,
+    },
+    {
+      name: 'someName',
+      listID: 10,
+    },
+    {
+      name: 'someName',
+      listID: 11,
+    },
+    {
+      name: 'someName',
+      listID: 12,
+    },
+    {
+      name: 'someName',
+      listID: 13,
+    },
+  ],
+}

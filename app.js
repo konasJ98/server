@@ -2,32 +2,42 @@ var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+var logger = require('morgan'); //http logging
+const chalk = require('chalk'); //colorized console output
 var debug = require('debug')('server:app');
+const listEndpoints = require('express-list-endpoints');
 
 var indexRouter = require('./routes/index');
 var standardTableRouter = require('./routes/standardTable');
 
-var sync = require('./bin/sync.js');
 const Json5Database = require('./bin/JsonDatabase.js');
 
-//const { sequelize, testConnection } = require('./bin/db');  // Import the testConnection function
-
 var app = express();
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
-app.use(logger('dev'));
-app.use(express.json());
+//Logging with Morgan
+// Custom stream for custom prefix
+const customStream = {
+  write: (message) => {
+    console.log(chalk.yellow('LOG:'), message.trim());
+  },
+};
+app.use(logger('dev', {  stream: customStream  }));
+
+app.use(express.json()); //automatically parses json in req body
+app.use(express.text()); //parsing text in req.body
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+//front page
 app.use('/', indexRouter);
 
-//route all paths containing only letters and numbers to some table
+//handly any doc
 app.use('/', standardTableRouter);
 
 // catch 404 and forward to error handler
@@ -47,5 +57,27 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+function listRoutes(app) {
+  const routes = [];
+  app._router.stack.forEach((middleware) => {
+    if (middleware.route) {
+      // Route detected
+      routes.push(middleware.route);
+    } else if (middleware.name === 'router') {
+      // Router detected
+      middleware.handle.stack.forEach((handler) => {
+        if (handler.route) {
+          routes.push(handler.route);
+        }
+      });
+    }
+  });
+  console.log('Registered Routes:', routes);
+}
+
+//listRoutes(app);
+//console.log('Endpoints:');
+//console.log(listEndpoints(app));
 
 module.exports = app;

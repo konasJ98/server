@@ -1,10 +1,20 @@
 {
-  //entries contains every song as follows:
-  "entries": [
-    //id is unique identifier
-    {"id": 1, "title": "Holiday", "duration": 180, "tempo": 120, },
-    {"id": 2, "title": "Fear of the Dark"},
-    {"id": 3, "title": "I get around"},
-  ]
-}
+  listID: 0, //this is a unique ID, songpool always has id 0, all further lists have running id
   
+  entries: [//the entries array is directly parseable by tabulator, it is input/ouput of getData/setData
+    {
+      id: 1,
+      title: 'Holidayzzzadf',
+      duration: 180,
+      tempo: 120,
+    },
+    {
+      id: 2,
+      title: 'Fear of the Dark',
+    },
+    {
+      id: 3,
+      title: 'adadfuuuuuuu',
+    },
+  ],
+}
