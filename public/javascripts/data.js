@@ -7,11 +7,14 @@ let loggingPersistence=false;
 
 // Default Functions
 function saveTableData(table){
-  saveTableDataToCookies(table);
+  //saveTableDataToCookies(table);
 }
 function loadTableData(id){
-  return loadTableDataFromCookies(id);
+  //return loadTableDataFromCookies(id);
+  //return getJson(id);
 }
+
+
 
 function persistenceWriter(id, type, data){
   //id - tables persistence id
@@ -134,3 +137,27 @@ function putToServer(url, data) {
       console.error('Error:', error); // Handle errors
     });
   }
+
+
+  //load table json data via http to api
+  /*function getJson(url, name) {
+    let data=fetch(url+'/'+name+'.json')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        return response.json();
+      })
+      .then(data => {
+        console.log('JSON data received:', data);
+        //return data;
+        //table.setData(data); // TODO: make this work as it should
+      })
+      .catch(error => {
+        console.error('Error fetching JSON:', error);
+      });
+      console.log(';;;;;;;;;;;;;;;;;;;')
+      console.log(data);
+      return data;
+  }*/

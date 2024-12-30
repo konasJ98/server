@@ -31,30 +31,32 @@ class Json5Database {
     
     //apply local patches
     List.patches.forEach(patch => {jsonpatch.applyPatch(sheet, [patch]);}); //damn... the [ ] outside of patch are important
-
+    
     return structuredClone(sheet); //deepcopy
   }
 
-  patchListAndSave(name, patch) {
+  patchListAndSave(name, patches) {
     // TODO: probably check if the patch is acutally valid, and allowed
     try {
         let List = this.Lists.find(item => item.filename === name+'.json5').content;
-        List.patches.push(patch);
+
+        // TODO: patches
+
+        List.patches.push(...patches);
         this.write(this.path+'/lists/'+name+'.json5', List);
     } catch (error) {
-        console.log('patching List '+name+'went wrong: '+patch)
-        console.log('WARNING! file not saved');
+        throw new Error('patchListAndSave has error: '+name+' '+patch);
     }
   }
 
-  patchPoolAndSave(patch) {
+  patchPoolAndSave(patches) {
     // TODO: probably check if the patch is acutally valid, and allowed
     try {
-        jsonpatch.applyPatch(this.Pool.entries, patch);
+        patches.forEach(patch => {console.log(patch); jsonpatch.applyPatch(this.Pool.entries, [patch]);}); //damn... the [ ] outside of patch are important
         this.write(this.path+'/songpool.json5', this.Pool);
     } catch (error) {
-        console.log('patching went wrong: '+patch)
-        console.log('WARNING! file not saved');
+        console.log(error);
+        throw new Error('patchPoolAndSave has error: '+patch);
     }
   }
 

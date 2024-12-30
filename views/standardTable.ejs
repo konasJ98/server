@@ -41,6 +41,8 @@
   <!-- Main table script -->
   <script src="https://unpkg.com/tabulator-tables/dist/js/tabulator.min.js"></script>
   <script>
+    let oldData=null;
+
     //Setting up a default table
     function setupTable(id){ //default table layout
       //console.log("Create table with id "+id)
@@ -63,9 +65,11 @@
             {title:"Comment", field:"comment", editor:"input"},
             {title:"Notes", field:"notes"}
         ],
-        data:loadTableData(id) //Load right away, elsewise it fails because initializing takes time.,
+        //data:loadTableData(id) //Load right away, elsewise it fails because initializing takes time.,
+        //data: getJson('<%= host %>', '<%= tableID %>')
+        ajaxURL: '<%= host %>/<%= tableID %>.json'
       });
-
+      //getJson('<%= host %>', id);
       table.on("tableBuilt", function () {
             //console.log("-----Table is fully initialized.");
             oldData = table.getData();
@@ -76,25 +80,18 @@
               //saveTableData(table); //this is in "offline" mode, where the table can be saved...
               //... but we need something like "syncTableData":
               console.log("-----dataChanged!");
-              const patch = computeJsonPatch();
-              patchToServer("<%= serverurl %>", patch);
+              //create patch by comparing latest data with old data
+              try {
+                const patch = jsonpatch.compare(oldData, table.getData());
+                console.log(oldData);
+                console.log(table.getData());
+                patchToServer("<%= serverurl %>", patch);
+              } catch (error) {
+                console.log('cant compute patch');
+              }
+              oldData = table.getData();
               //putToServer("<%= serverurl %>", {list: id, tableData: table.getData()});
       });
-    }
-  </script>
-
-  <!-- Compute Json Patch -->
-  <script>
-    function computeJsonPatch() {
-      //create patch by comparing latest data with old data
-      try {
-        const patch = jsonpatch.compare(oldData, table.getData());
-        oldData = table.getData();
-        return patch;
-      } catch (error) {
-        console.log('cant compute patch');
-        oldData = table.getData();
-      }
     }
   </script>
 
@@ -102,7 +99,6 @@
     //Initialize
     let table = null;
     setupTable("songpool");
-    let oldData = null;
   </script>
 
   <!-- Handle Sheets -->
