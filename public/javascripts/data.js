@@ -1,21 +1,9 @@
 
 // Logging
 let loggingCookies=false;
-let loggingPersistence=false;
+let loggingPersistence=true;
 
-
-
-// Default Functions
-function saveTableData(table){
-  //saveTableDataToCookies(table);
-}
-function loadTableData(id){
-  //return loadTableDataFromCookies(id);
-  //return getJson(id);
-}
-
-
-
+/*
 function persistenceWriter(id, type, data){
   //id - tables persistence id
   //type - type of data being persisted ("sort", "filter", "group", "page" or "columns")
@@ -25,11 +13,13 @@ function persistenceWriter(id, type, data){
   savePersistenceLocal(id, type, data);
 }
 function savePersistenceLocal(id, type, data){
-  localStorage.setItem(id + "-" + type, JSON.stringify(data));
+  try {
+    localStorage.setItem(id + "-" + type, JSON.stringify(data));
+    console.log("Data stored successfully");
+  } catch (error) {
+    console.error("Error saving to localStorage:", error);
+  }
 }
-
-
-
 // Local persistence
 function persistenceReader(id, type){
   //id - tables persistence id
@@ -39,11 +29,15 @@ function persistenceReader(id, type){
   loadPersistenceLocal(id, type);
 }
 function loadPersistenceLocal(id, type){
-  var data = localStorage.getItem(id + "-" + type);
-  return data ? JSON.parse(data) : false;
+  try {
+    var data = localStorage.getItem(id + "-" + type);
+    console.log("Data loaded successfully");
+    return data ? JSON.parse(data) : false;
+  } catch (error) {
+    console.error("Error loading from localStorage:", error);
+  }
+  
 }
-
-
 
 // Cookie Handling
 function setCookie(name, value, days) {
@@ -64,8 +58,6 @@ function getCookie(name) {
   return null;
 }
 
-
-
 // Table data cookies
 function saveTableDataToCookies(table) {
   const tableData = table.getData();
@@ -75,7 +67,6 @@ function saveTableDataToCookies(table) {
   setCookie(filename, jsonData, 7000000);  // Save cookie for 7 days
   if(loggingCookies) console.log("Table data saved to cookies! Name is "+filename);
 }
-
 function loadTableDataFromCookies(id) {
   filename=id;
   if(loggingCookies) console.log("Try loading cookie named "+filename)
@@ -89,7 +80,7 @@ function loadTableDataFromCookies(id) {
     if(loggingCookies) console.log("No table data found in cookies.");
   }
 }
-
+*/
 
 
 //sync json via http patch
@@ -137,27 +128,3 @@ function putToServer(url, data) {
       console.error('Error:', error); // Handle errors
     });
   }
-
-
-  //load table json data via http to api
-  /*function getJson(url, name) {
-    let data=fetch(url+'/'+name+'.json')
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        return response.json();
-      })
-      .then(data => {
-        console.log('JSON data received:', data);
-        //return data;
-        //table.setData(data); // TODO: make this work as it should
-      })
-      .catch(error => {
-        console.error('Error fetching JSON:', error);
-      });
-      console.log(';;;;;;;;;;;;;;;;;;;')
-      console.log(data);
-      return data;
-  }*/

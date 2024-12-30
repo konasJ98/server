@@ -56,8 +56,9 @@
       table = new Tabulator("#main-table", {
         persistence:true,
         persistenceID: listID,
-        persistenceWriterFunc: persistenceWriter,
-        persistenceReaderFunc: persistenceReader,
+        // TODO: custom persistence functions. current ones don't work
+        //persistenceWriterFunc: persistenceWriter,
+        //persistenceReaderFunc: persistenceReader,
         movableRows:true,
         movableColumns: true,
         rowHeader:{headerSort:false, resizable: false, minWidth:30, width:30, rowHandle:true, formatter:"handle"},
